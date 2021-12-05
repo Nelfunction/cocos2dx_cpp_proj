@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="F:\COP\Game\cocos2d\cocos2d-x-3.17.2\projects\mocha\Classes\AppDelegate.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\COP\Game\cocos2d\cocos2d-x-3.17.2\projects\mocha\Classes\HelloWorldScene.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\COP\Game\cocos2d\cocos2d-x-3.17.2\projects\mocha\proj.win32\main.cpp">
+      <Filter>Source Files\proj.win32</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\COP\Game\cocos2d\cocos2d-x-3.17.2\projects\mocha\cocos2d\cocos\precheader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="F:\COP\Game\cocos2d\cocos2d-x-3.17.2\projects\mocha\Classes\AppDelegate.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\COP\Game\cocos2d\cocos2d-x-3.17.2\projects\mocha\Classes\HelloWorldScene.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\COP\Game\cocos2d\cocos2d-x-3.17.2\projects\mocha\proj.win32\main.h">
+      <Filter>Source Files\proj.win32</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\COP\Game\cocos2d\cocos2d-x-3.17.2\projects\mocha\proj.win32\resource.h">
+      <Filter>Source Files\proj.win32</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\COP\Game\cocos2d\cocos2d-x-3.17.2\projects\mocha\Resources\CloseNormal.png">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\COP\Game\cocos2d\cocos2d-x-3.17.2\projects\mocha\Resources\CloseSelected.png">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\COP\Game\cocos2d\cocos2d-x-3.17.2\projects\mocha\Resources\HelloWorld.png">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\COP\Game\cocos2d\cocos2d-x-3.17.2\projects\mocha\Resources\fonts\Marker Felt.ttf">
+      <Filter>Resources\fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\COP\Game\cocos2d\cocos2d-x-3.17.2\projects\mocha\Resources\fonts\arial.ttf">
+      <Filter>Resources\fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\COP\Game\cocos2d\cocos2d-x-3.17.2\projects\mocha\Resources\res\.gitkeep">
+      <Filter>Resources\res</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="F:\COP\Game\cocos2d\cocos2d-x-3.17.2\projects\mocha\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="F:\COP\Game\cocos2d\cocos2d-x-3.17.2\projects\mocha\proj.win32\game.rc">
+      <Filter>Source Files\proj.win32</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{A4D1438F-75E4-324F-85C6-773511A06736}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\fonts">
+      <UniqueIdentifier>{F500A157-496C-387E-8CDC-D1D8D54DA57D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\res">
+      <UniqueIdentifier>{D9253F3A-4A22-3D75-9C2B-4D323016508C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{843B5FA0-B814-346B-AD84-238F3830885F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Classes">
+      <UniqueIdentifier>{4C2483D5-8DAC-39FE-9DC1-DE9EDA0E928A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\proj.win32">
+      <UniqueIdentifier>{DBA1B256-E1C1-3D0F-86BC-15A1AA4359A5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

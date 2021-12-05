@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="F:\COP\Game\cocos2d\cocos2d-x-3.17.2\projects\mocha\cocos2d\external\empty.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="F:\COP\Game\cocos2d\cocos2d-x-3.17.2\projects\mocha\cocos2d\external\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{843B5FA0-B814-346B-AD84-238F3830885F}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

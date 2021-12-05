@@ -1,0 +1,8 @@
+.vs/
+cocos2d/
+
+proj.android/
+proj.ios_mac/
+proj.linux/
+.vscode/
+proj.win32/Debug.win32/
