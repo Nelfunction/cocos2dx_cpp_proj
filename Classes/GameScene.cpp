@@ -4,10 +4,13 @@
 
 USING_NS_CC;
 
-RepeatForever* move;
+RepeatForever* repeat_move;
+Animation* animation_atk;
+Animation* animation_jump;
 int pressLeft = 0;
 int pressRight = 0;
 bool moving = false;
+bool jumping = false;
 
 bool web_connected = false;
 bool web_alive = false;
@@ -78,18 +81,47 @@ void GameScene::onEnterTransitionDidFinish() {
     this->addChild(menu);
     //
 
-    //
+    // 애니메이션
     auto sprite = Sprite::create("spider.png");
     auto texture = sprite->getTexture();
-    auto animation = Animation::create();
-    animation->setDelayPerUnit(0.0625f);
+    // 이동
+    auto animation_move = Animation::create();
+    animation_move->setDelayPerUnit(0.0625f);
     for (int i = 0; i < 8; i++)
     {
         int column = i % 4;
-        int row = i / 5;
-        animation->addSpriteFrameWithTexture(texture,
+        int row = i / 4;
+        animation_move->addSpriteFrameWithTexture(texture,
             Rect(column * 100, row * 100, 100, 100));
     }
+    auto animate_move = Animate::create(animation_move);
+    repeat_move = RepeatForever::create(animate_move);
+    repeat_move->retain();
+    // 공격
+    auto animation_atk = Animation::create();
+    animation_atk->setDelayPerUnit(0.125f);
+    for (int i = 8; i < 14; i++)
+    {
+        int column = i % 4;
+        int row = i / 4;
+        animation_atk->addSpriteFrameWithTexture(texture,
+            Rect(column * 100, row * 100, 100, 100));
+    }
+    auto animate_atk = Animate::create(animation_atk);
+    animate_atk->retain();
+    // 점프
+    auto animation_jump = Animation::create();
+    animation_jump->setDelayPerUnit(0.125f);
+    for (int i = 14; i < 19; i++)
+    {
+        int column = i % 4;
+        int row = i / 4;
+        animation_jump->addSpriteFrameWithTexture(texture,
+            Rect(column * 100, row * 100, 100, 100));
+    }
+    auto animate_jump = Animate::create(animation_jump);
+    animation_jump->retain();
+    //
 
     // 메인 캐릭터
     auto spider = Sprite::create("spider.png", Rect(0, 0, 100, 100));
@@ -97,10 +129,6 @@ void GameScene::onEnterTransitionDidFinish() {
     spider->setName("spider");
     spider->setPosition(Point(240, 160));
     this->addChild(spider);
-
-    auto animate = Animate::create(animation);
-    move = RepeatForever::create(animate);
-    move->retain();
 
     auto eventListener = EventListenerKeyboard::create();
     eventListener->onKeyPressed = CC_CALLBACK_2(GameScene::onKeyPressed, this);
@@ -238,7 +266,7 @@ void GameScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
         pressLeft = pressRight + 1;
         if (!moving) {
             moving = true;
-            spider->runAction(move);
+            spider->runAction(repeat_move);
             spider->setFlipX(true);
         }
         break;
@@ -246,12 +274,12 @@ void GameScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
         pressRight = pressLeft + 1;
         if (!moving) {
             moving = true;
-            spider->runAction(move);
+            spider->runAction(repeat_move);
             spider->setFlipX(false);
         }
         break;
     case EventKeyboard::KeyCode::KEY_SPACE:
-
+        jumping = true;
         break;
     case EventKeyboard::KeyCode::KEY_Z:
         if (web_connected)
@@ -270,7 +298,7 @@ void GameScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::
         pressLeft = 0;
         if (!pressRight) {
             moving = false;
-            spider->stopAction(move);
+            spider->stopAction(repeat_move);
         }
         else
             spider->setFlipX(false);
@@ -279,7 +307,7 @@ void GameScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::
         pressRight = 0;
         if (!pressLeft) {
             moving = false;
-            spider->stopAction(move);
+            spider->stopAction(repeat_move);
         }
         else
             spider->setFlipX(true);
@@ -300,6 +328,9 @@ void GameScene::update(float delta)
         {
             spider->setPositionX(spider->getPositionX() + 120.0f * delta);
         }
+    }
+    if (jumping) {
+
     }
 
 }
