@@ -12,6 +12,7 @@ bool moving = false;
 bool web_connected = false;
 bool web_alive = false;
 PhysicsJointLimit* webjoint; // 거미줄 물리 joint
+Sprite* WEB;
 
 Scene* GameScene::createScene()
 {
@@ -49,6 +50,7 @@ void GameScene::onEnterTransitionDidFinish() {
     auto director = Director::getInstance();
     auto vSize = director->getVisibleSize();
     this->getScene()->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_JOINT);
+	this->getScene()->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_NONE);
     // bg color
     auto bg = cocos2d::LayerColor::create(Color4B(53, 53, 53, 255));
     this->addChild(bg);
@@ -166,7 +168,8 @@ bool GameScene::onContactBegin(cocos2d::PhysicsContact& contact) //거미줄 이벤트
     {
         webjoint = PhysicsJointLimit::construct(spider->getPhysicsBody(), a, Point::ZERO, Point::ZERO, 30.0f, a->getPosition().getDistance(spider->getPosition()));
         this->getScene()->getPhysicsWorld()->addJoint(webjoint);
-        this->removeChild(b->getOwner());
+		b->setTag(2);
+        //this->removeChild(b->getOwner());
         web_connected = true;
     }
 
@@ -174,7 +177,8 @@ bool GameScene::onContactBegin(cocos2d::PhysicsContact& contact) //거미줄 이벤트
     {
         webjoint = PhysicsJointLimit::construct(spider->getPhysicsBody(), b, Point::ZERO, Point::ZERO, 30.0f, spider->getPosition().getDistance(b->getPosition()));
         this->getScene()->getPhysicsWorld()->addJoint(webjoint);
-        this->removeChild(a->getOwner());
+        //this->removeChild(a->getOwner());
+		a->setTag(2);
         web_connected = true;
     }
 
@@ -195,39 +199,42 @@ void GameScene::onMouseUp(cocos2d::Event* event) // 마우스 클릭시 거미줄 생성
     auto isRight = mouseEvent->getMouseButton();
     auto spider = (Sprite*)this->getChildByTag(1);
 
-    if (!web_alive)
+    if (!web_alive&&!web_connected)
     {
 
         web_alive = true;
-        auto spriteB = Sprite::create("CloseNormal.png");
-        spriteB->addComponent(PhysicsBody::createBox(spriteB->getContentSize(), PhysicsMaterial(0, 1, 0)));
-        spriteB->setPosition(spider->getPosition());
-        spriteB->setAnchorPoint(Point::ANCHOR_MIDDLE_LEFT);
+        WEB = Sprite::create("CloseNormal.png");
+		WEB->addComponent(PhysicsBody::createBox(WEB->getContentSize(), PhysicsMaterial(0, 1, 0)));
+		WEB->setPosition(spider->getPosition());
+		WEB->setAnchorPoint(Point::ANCHOR_MIDDLE_LEFT);
 
 
-        auto scaleAmmo = spriteB->getContentSize().width / spriteB->getPosition().getDistance(ClickPoint);
-        //spriteB->setScaleX(1.0f / scaleAmmo);
+        auto scaleAmmo = WEB->getContentSize().width / WEB->getPosition().getDistance(ClickPoint);
+        //WEB->setScaleX(1.0f / scaleAmmo);
 
-        spriteB->setRotation(getAngle(spider->getPosition(), ClickPoint));
+		WEB->setRotation(getAngle(spider->getPosition(), ClickPoint));
 
         auto scaling = Sequence::create(
-            ScaleTo::create(0.1f, (1.0f / scaleAmmo), spriteB->getScaleX() * 0.1), CallFuncN::create(CC_CALLBACK_1(GameScene::webRemove, this)),
+            ScaleTo::create(0.1f, (1.0f / scaleAmmo), WEB->getScaleX() * 0.1), CallFuncN::create(CC_CALLBACK_1(GameScene::webRemove, this)),
             nullptr);
-        auto spriteBodyB = spriteB->getPhysicsBody();
+        auto spriteBodyB = WEB->getPhysicsBody();
         spriteBodyB->setGravityEnable(false);
         spriteBodyB->setCategoryBitmask(1);
         spriteBodyB->setCollisionBitmask(4);
         spriteBodyB->setContactTestBitmask(true);
 
-        spriteB->runAction(scaling);
-        this->addChild(spriteB);
+		WEB->runAction(scaling);
+        this->addChild(WEB);
     }
 }
 
 void GameScene::webRemove(Node* node) //거미줄 사라지게함
 {
-    node->removeFromParent();
-    web_alive = false;
+	if (!web_connected)
+	{
+		node->removeFromParent();
+		web_alive = false;
+	}
 }
 
 void GameScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) {
@@ -259,6 +266,7 @@ void GameScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
             webjoint->removeFormWorld();
             web_connected = false;
             web_alive = false;
+			WEB->removeFromParent();
         }
         break;
     }
@@ -301,5 +309,27 @@ void GameScene::update(float delta)
             spider->setPositionX(spider->getPositionX() + 120.0f * delta);
         }
     }
+	if (web_connected) //만약 거미줄이 연결되었다면 
+	{
 
+		auto posA = webjoint->getBodyA()->getPosition();
+		auto posB = webjoint->getBodyB()->getPosition();
+		
+		
+		WEB->setPosition(posA);
+		
+		WEB->setAnchorPoint(Point::ANCHOR_MIDDLE_LEFT);
+		
+		auto scaleAmmo = WEB->getContentSize().width / WEB->getPosition().getDistance(posB);
+		WEB->setScaleX(1.0f / scaleAmmo);
+
+		WEB->setRotation(getAngle(posA, posB));
+
+		auto spriteBodyB = WEB->getPhysicsBody();
+		spriteBodyB->setGravityEnable(false);
+		spriteBodyB->setCategoryBitmask(1);
+		spriteBodyB->setCollisionBitmask(2);
+		spriteBodyB->setContactTestBitmask(true);
+		
+	}
 }
