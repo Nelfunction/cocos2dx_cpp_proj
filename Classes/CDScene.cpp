@@ -53,14 +53,15 @@ bool CD::init()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+
 	auto edgeNode = Node::create();
 	auto edgeBody = PhysicsBody::createEdgeBox(visibleSize, PHYSICSBODY_MATERIAL_DEFAULT, 3);
 
 	edgeNode->addComponent(edgeBody);
 
 	edgeNode->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
-
 	this->addChild(edgeNode);
+	
 	return true;
 }
 
@@ -68,7 +69,7 @@ void CD::onEnterTransitionDidFinish() {
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
+	this->getScene()->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_JOINT);  // joint만 보이게 만들어줌
 	mainSprite = Sprite::create("HelloWorld.png");
 	mainSprite->setPosition(250,100);
 
@@ -178,7 +179,6 @@ void CD::onMouseUp(cocos2d::Event* event) // 마우스 클릭시 거미줄 생성
 
 	if (!web_exist)
 	{
-
 		web_exist = true;
 		auto spriteB = Sprite::create("CloseNormal.png"); 
 		spriteB->addComponent(PhysicsBody::createBox(spriteB->getContentSize(), PhysicsMaterial(0, 1, 0)));
@@ -187,12 +187,14 @@ void CD::onMouseUp(cocos2d::Event* event) // 마우스 클릭시 거미줄 생성
 
 
 		auto scaleAmmo = spriteB->getContentSize().width / spriteB->getPosition().getDistance(ClickPoint);
-		spriteB->setScaleX(1.0f / scaleAmmo);
+		//spriteB->setScaleX(1.0f / scaleAmmo);  //거미줄 발사하게함
+
 
 		spriteB->setRotation(getAngleOfTwoVectors(mainSprite->getPosition(), ClickPoint));
 
+
 		auto scaling = Sequence::create(
-			ScaleTo::create(0.1f, (1.0f / scaleAmmo), spriteB->getScaleY()*0.1), CallFuncN::create(CC_CALLBACK_1(CD::webRemove, this)),
+			ScaleTo::create(0.1f, (1.0f / scaleAmmo), spriteB->getScaleX()*0.1), CallFuncN::create(CC_CALLBACK_1(CD::webRemove, this)),
 			nullptr);
 		auto spriteBodyB = spriteB->getPhysicsBody();
 		spriteBodyB->setGravityEnable(false);
@@ -207,6 +209,7 @@ void CD::onMouseUp(cocos2d::Event* event) // 마우스 클릭시 거미줄 생성
 
 void CD::webRemove(Node* node) //거미줄 사라지게함
 {
+	
 	node->removeFromParent();
 	web_exist = false;
 }
