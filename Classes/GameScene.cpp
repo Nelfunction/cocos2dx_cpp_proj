@@ -41,7 +41,6 @@ bool GameScene::init()
     this->addChild(edgeNode);
     //
 
-    scheduleUpdate();
     return true;
 }
 
@@ -49,7 +48,7 @@ void GameScene::onEnterTransitionDidFinish() {
 
     auto director = Director::getInstance();
     auto vSize = director->getVisibleSize();
-
+    this->getScene()->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_JOINT);
     // bg color
     auto bg = cocos2d::LayerColor::create(Color4B(53, 53, 53, 255));
     this->addChild(bg);
@@ -138,6 +137,7 @@ void GameScene::onEnterTransitionDidFinish() {
     Mouse->onMouseUp = CC_CALLBACK_1(GameScene::onMouseUp, this);
     this->_eventDispatcher->addEventListenerWithSceneGraphPriority(Mouse, this);
 
+    scheduleUpdate();
 }
 
 Sprite* GameScene::makeSprite(const char* path, Vec2 position) //거미줄로 끌어당길 sprite 만들어 주는 함수
@@ -151,7 +151,7 @@ Sprite* GameScene::makeSprite(const char* path, Vec2 position) //거미줄로 끌어당
     auto SBody = S->getPhysicsBody();
     SBody->setCollisionBitmask(1);
     SBody->setContactTestBitmask(true);
-
+    SBody->setLinearDamping(0.2f);
     return S;
 }
 
@@ -206,12 +206,12 @@ void GameScene::onMouseUp(cocos2d::Event* event) // 마우스 클릭시 거미줄 생성
 
 
         auto scaleAmmo = spriteB->getContentSize().width / spriteB->getPosition().getDistance(ClickPoint);
-        spriteB->setScaleX(1.0f / scaleAmmo);
+        //spriteB->setScaleX(1.0f / scaleAmmo);
 
         spriteB->setRotation(getAngle(spider->getPosition(), ClickPoint));
 
         auto scaling = Sequence::create(
-            ScaleTo::create(0.1f, (1.0f / scaleAmmo), spriteB->getScaleY() * 0.1), CallFuncN::create(CC_CALLBACK_1(GameScene::webRemove, this)),
+            ScaleTo::create(0.1f, (1.0f / scaleAmmo), spriteB->getScaleX() * 0.1), CallFuncN::create(CC_CALLBACK_1(GameScene::webRemove, this)),
             nullptr);
         auto spriteBodyB = spriteB->getPhysicsBody();
         spriteBodyB->setGravityEnable(false);
@@ -232,6 +232,7 @@ void GameScene::webRemove(Node* node) //거미줄 사라지게함
 
 void GameScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) {
     auto spider = (Sprite*)this->getChildByTag(1);
+    auto spiderBody = spider->getPhysicsBody();
     switch (keyCode) {
     case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
         pressLeft = pressRight + 1;
@@ -288,15 +289,15 @@ void GameScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::
 
 void GameScene::update(float delta)
 {
+    auto spider = getChildByTag(1);
+    spider->getPhysicsBody()->setVelocity(Vec2(0, spider->getPhysicsBody()->getVelocity().y));
     if (moving) {
         if (pressLeft > 0 && (pressRight == 0 || pressLeft < pressRight))
         {
-            auto spider = getChildByTag(1);
             spider->setPositionX(spider->getPositionX() - 120.0f * delta);
         }
         else if (pressRight > 0 && (pressLeft==0 || pressLeft > pressRight))
         {
-            auto spider = getChildByTag(1);
             spider->setPositionX(spider->getPositionX() + 120.0f * delta);
         }
     }

@@ -23,8 +23,7 @@ private:
 	cocos2d::PhysicsWorld *sceneWorld;
 
 	void SetPhysicsWorld(cocos2d::PhysicsWorld *world) { sceneWorld = world; };
-	bool onContactBegin(cocos2d::PhysicsContact &
-	);
+	bool onContactBegin(cocos2d::PhysicsContact & contact);
 
 };
 
