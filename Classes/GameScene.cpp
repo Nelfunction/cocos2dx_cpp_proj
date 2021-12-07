@@ -5,11 +5,13 @@
 USING_NS_CC;
 
 RepeatForever* repeat_move;
-Animation* animation_atk;
-Animation* animation_jump;
+Animate* animate_atk;
+Animate* animate_jump;
+float cooldown = 0.0f;
 int pressLeft = 0;
 int pressRight = 0;
 bool moving = false;
+bool moveanimate = false;
 bool jumping = false;
 
 bool web_connected = false;
@@ -60,7 +62,7 @@ void GameScene::onEnterTransitionDidFinish() {
     //
 
     // label
-    auto label = Label::createWithTTF("Main Gameplay", "fonts/Arial.ttf", 24);
+    auto label = Label::createWithTTF("Click to web shooting / Press Z to release", "fonts/Arial.ttf", 20);
     //
     label->setPosition(Vec2(vSize.width / 2, vSize.height - 100));
     this->addChild(label, 0);
@@ -73,8 +75,8 @@ void GameScene::onEnterTransitionDidFinish() {
             Director::getInstance()->replaceScene(scene);
         });
     //
-    button1->setScale(0.2f);
-    button1->setPosition(Vec2(500, 600));
+    button1->setScale(0.1f);
+    button1->setPosition(Vec2(vSize.width - 100, vSize.height - 100));
     //
 
     // menu
@@ -109,7 +111,7 @@ void GameScene::onEnterTransitionDidFinish() {
         animation_atk->addSpriteFrameWithTexture(texture,
             Rect(column * 100, row * 100, 100, 100));
     }
-    auto animate_atk = Animate::create(animation_atk);
+    animate_atk = Animate::create(animation_atk);
     animate_atk->retain();
     // 점프
     auto animation_jump = Animation::create();
@@ -121,8 +123,8 @@ void GameScene::onEnterTransitionDidFinish() {
         animation_jump->addSpriteFrameWithTexture(texture,
             Rect(column * 100, row * 100, 100, 100));
     }
-    auto animate_jump = Animate::create(animation_jump);
-    animation_jump->retain();
+    animate_jump = Animate::create(animation_jump);
+    animate_jump->retain();
     //
 
     // 메인 캐릭터
@@ -139,9 +141,9 @@ void GameScene::onEnterTransitionDidFinish() {
     //
 
 
-    // 물리 실체 주기
+    // 물리 실체
     //auto spider = (Sprite*)this->getChildByTag(1);
-    auto spiderBody = PhysicsBody::createBox(Size(70, 50), PhysicsMaterial(0, 1, 0));
+    auto spiderBody = PhysicsBody::createBox(Size(70, 50), PhysicsMaterial(0, 0, 0));
     spider->setPhysicsBody(spiderBody);
     //this->addChild(spider);
 
@@ -151,11 +153,17 @@ void GameScene::onEnterTransitionDidFinish() {
     spiderBody->setRotationEnable(false);
 
     // 더미 물체
-    auto spriteB = makeSprite("CloseNormal.png", Point(vSize.width / 2 - 200, vSize.height / 2 + 200));
-    auto spriteC = makeSprite("CloseNormal.png", Point(vSize.width / 2 - 200, vSize.height / 2 + 200));
+    auto spriteB = makeSprite("companion.png", Point(vSize.width / 2 - 200, vSize.height / 2 + 200));
+    auto spriteC = makeSprite("companion.png", Point(vSize.width / 2 - 150, vSize.height / 2 + 150));
+    auto spriteD = makeSprite("companion.png", Point(vSize.width / 2 - 50, vSize.height / 2 + 250));
+    auto spriteE = makeSprite("companion.png", Point(vSize.width / 2 + 200, vSize.height / 2));
+    auto spriteF = makeSprite("companion.png", Point(vSize.width / 2 + 150, vSize.height / 2 + 50));
 
     this->addChild(spriteB);
     this->addChild(spriteC);
+    this->addChild(spriteD);
+    this->addChild(spriteE);
+    this->addChild(spriteF);
 
     // 거미줄 연결
     auto contactListener = EventListenerPhysicsContact::create();
@@ -229,9 +237,14 @@ void GameScene::onMouseUp(cocos2d::Event* event) // 마우스 클릭시 거미줄 생성
 
     if (!web_alive&&!web_connected)
     {
+        if (moveanimate) {
+            moveanimate = false;
+            spider->stopAction(repeat_move);
+        }
+        spider->runAction(animate_atk);
 
         web_alive = true;
-        WEB = Sprite::create("CloseNormal.png");
+        WEB = Sprite::create("web.png");
 		WEB->addComponent(PhysicsBody::createBox(WEB->getContentSize(), PhysicsMaterial(0, 1, 0)));
 		WEB->setPosition(spider->getPosition());
 		WEB->setAnchorPoint(Point::ANCHOR_MIDDLE_LEFT);
@@ -269,24 +282,40 @@ void GameScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
     auto spider = (Sprite*)this->getChildByTag(1);
     auto spiderBody = spider->getPhysicsBody();
     switch (keyCode) {
-    case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+    case EventKeyboard::KeyCode::KEY_A:
         pressLeft = pressRight + 1;
         if (!moving) {
             moving = true;
-            spider->runAction(repeat_move);
-            spider->setFlipX(true);
+            if (!moveanimate) {
+                spider->runAction(repeat_move);
+                moveanimate = true;
+                spider->setFlipX(true);
+            }
         }
         break;
-    case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+    case EventKeyboard::KeyCode::KEY_D:
         pressRight = pressLeft + 1;
         if (!moving) {
             moving = true;
-            spider->runAction(repeat_move);
-            spider->setFlipX(false);
+            if (!moveanimate) {
+                spider->runAction(repeat_move);
+                moveanimate = true;
+                spider->setFlipX(false);
+            }
         }
         break;
-    case EventKeyboard::KeyCode::KEY_SPACE:
-        jumping = true;
+    case EventKeyboard::KeyCode::KEY_W:
+        log("W pressed");
+        if (!jumping) {
+            log("jumping!");
+            jumping = true;
+            cooldown = 0.5f;
+            if (moveanimate) {
+                moveanimate = false;
+                spider->stopAction(repeat_move);
+            }
+            spider->runAction(animate_jump);
+        }
         break;
     case EventKeyboard::KeyCode::KEY_Z:
         if (web_connected)
@@ -302,20 +331,26 @@ void GameScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
 void GameScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) {
     auto spider = (Sprite*)getChildByTag(1);
     switch (keyCode) {
-    case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+    case EventKeyboard::KeyCode::KEY_A:
         pressLeft = 0;
         if (!pressRight) {
             moving = false;
-            spider->stopAction(repeat_move);
+            if (moveanimate) {
+                spider->stopAction(repeat_move);
+                moveanimate = false;
+            }
         }
         else
             spider->setFlipX(false);
         break;
-    case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+    case EventKeyboard::KeyCode::KEY_D:
         pressRight = 0;
         if (!pressLeft) {
             moving = false;
-            spider->stopAction(repeat_move);
+            if (moveanimate) {
+                spider->stopAction(repeat_move);
+                moveanimate = false;
+            }
         }
         else
             spider->setFlipX(true);
@@ -328,6 +363,12 @@ void GameScene::update(float delta)
     auto spider = getChildByTag(1);
     spider->getPhysicsBody()->setVelocity(Vec2(0, spider->getPhysicsBody()->getVelocity().y));
     if (moving) {
+        if (!moveanimate && spider->numberOfRunningActions() == 0)
+        {
+            spider->runAction(repeat_move);
+            moveanimate = true;
+        }
+
         if (pressLeft > 0 && (pressRight == 0 || pressLeft < pressRight))
         {
             spider->setPositionX(spider->getPositionX() - 120.0f * delta);
@@ -337,8 +378,15 @@ void GameScene::update(float delta)
             spider->setPositionX(spider->getPositionX() + 120.0f * delta);
         }
     }
-    if (jumping) {
 
+    if (jumping) {
+        log("jump");
+        spider->setPositionY(spider->getPositionY() + 10.0f * cooldown);
+        cooldown -= delta;
+        if (cooldown <= 0.0f) {
+            cooldown = 0.0f;
+            jumping = false;
+        }
     }
 
 	if (web_connected) //만약 거미줄이 연결되었다면 

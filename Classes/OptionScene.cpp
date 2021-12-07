@@ -25,18 +25,29 @@ bool OptionScene::init()
     auto director = Director::getInstance();
     auto vSize = director->getVisibleSize();
 
+    // bg color
+    auto bg = cocos2d::LayerColor::create(Color4B(53, 53, 53, 255));
+    this->addChild(bg);
     //
-    auto label = Label::createWithTTF("Option", "fonts/Arial.ttf", 24);
+    // 
+    //
+    auto label = Label::createWithTTF("INFO", "fonts/Arial.ttf", 24);
     //
     label->setPosition(Vec2(vSize.width / 2, vSize.height - 100));
     this->addChild(label, 0);
     //
 
-    // character
-    auto character = Sprite::create("testcharactersheet.png", Rect(67, 100, 67, 100));
     //
-    character->setPosition(Vec2(vSize.width / 2, vSize.height / 2));
-    character->setScale(2.0f);
+    auto label2 = Label::createWithTTF("powered by - cocod2dx\nhttps://github.com/cocos2d/cocos2d-xnpainted \n\npainted by - Piskel\nhttps://github.com/piskelapp/piskel \n\nour repo \nhttps://github.com/Nelfunction/cocos2dx_cpp_proj", "fonts/Arial.ttf", 14);
+    //
+    label2->setPosition(Vec2(vSize.width / 2, vSize.height - 200));
+    this->addChild(label2, 0);
+    //
+
+    // character
+    auto character = Sprite::create("spider.png", Rect(100, 100, 100, 100));
+    //
+    character->setPosition(Vec2(vSize.width / 2, vSize.height / 2 - 50));
     this->addChild(character, 0);
     //
 
@@ -47,7 +58,7 @@ bool OptionScene::init()
             Director::getInstance()->replaceScene(scene);
         });
     //
-    button1->setScale(0.2f);
+    button1->setScale(0.1f);
     button1->setPosition(Vec2(vSize.width / 2, 120));
     //
 
