@@ -38,7 +38,7 @@ bool OptionScene::init()
     //
 
     //
-    auto label2 = Label::createWithTTF("powered by - cocod2dx\nhttps://github.com/cocos2d/cocos2d-xnpainted \n\npainted by - Piskel\nhttps://github.com/piskelapp/piskel \n\nour repo \nhttps://github.com/Nelfunction/cocos2dx_cpp_proj", "fonts/Arial.ttf", 14);
+    auto label2 = Label::createWithTTF("powered by - cocod2dx\nhttps://github.com/cocos2d/cocos2d-x \n\npainted by - Piskel\nhttps://github.com/piskelapp/piskel \n\nour repo \nhttps://github.com/Nelfunction/cocos2dx_cpp_proj", "fonts/Arial.ttf", 14);
     //
     label2->setPosition(Vec2(vSize.width / 2, vSize.height - 200));
     this->addChild(label2, 0);
