@@ -237,6 +237,10 @@ void GameScene::onMouseUp(cocos2d::Event* event) // 마우스 클릭시 거미줄 생성
 
     if (!web_alive&&!web_connected)
     {
+		if (spider->numberOfRunningActions() > 0)
+		{
+			spider->stopAllActions();
+		}
         if (moveanimate) {
             moveanimate = false;
             spider->stopAction(repeat_move);
@@ -306,6 +310,10 @@ void GameScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
         break;
     case EventKeyboard::KeyCode::KEY_W:
         log("W pressed");
+		if (spider->numberOfRunningActions() > 0)
+		{
+			spider->stopAllActions();
+		}
         if (!jumping) {
             log("jumping!");
             jumping = true;
