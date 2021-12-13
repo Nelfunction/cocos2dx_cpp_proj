@@ -40,10 +40,10 @@ bool GameScene::init()
 
     //물리 박스
     auto edgeNode = Node::create();
-    auto edgeBody = PhysicsBody::createEdgeBox(vSize, PHYSICSBODY_MATERIAL_DEFAULT, 3);
+    auto edgeBody = PhysicsBody::createEdgeBox(Size(vSize.width, vSize.height-100), PHYSICSBODY_MATERIAL_DEFAULT, 3);
     //
     edgeNode->addComponent(edgeBody);
-    edgeNode->setPosition(Point(vSize.width / 2, vSize.height / 2));
+    edgeNode->setPosition(Point(vSize.width / 2, vSize.height / 2 + 50));
     this->addChild(edgeNode);
     //
 
@@ -56,9 +56,14 @@ void GameScene::onEnterTransitionDidFinish() {
     auto vSize = director->getVisibleSize();
     this->getScene()->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_JOINT);
 	this->getScene()->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_NONE);
-    // bg color
-    auto bg = cocos2d::LayerColor::create(Color4B(53, 53, 53, 255));
-    this->addChild(bg);
+
+    // background
+    auto back = Sprite::create("gamebackground.png");
+    //
+    back->setPosition(Vec2(vSize.width / 2, vSize.height / 2));
+    auto back_size = back->getContentSize();
+    back->setScale(vSize.height / back_size.height, vSize.height / back_size.height);
+    this->addChild(back, 0);
     //
 
     // label
